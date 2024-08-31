@@ -1,4 +1,4 @@
-package dev.hungndl.todo.domain.api
+package dev.hungndl.todo
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
