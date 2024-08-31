@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":application"))
     testImplementation(kotlin("test"))
+    implementation("org.springframework.boot:spring-boot-starter-web")
 }
 
 tasks.test {
