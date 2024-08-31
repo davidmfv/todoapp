@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":application"))
+    implementation(project(":infrastructure"))
     testImplementation(kotlin("test"))
     implementation("org.springframework.boot:spring-boot-starter-web")
 }
