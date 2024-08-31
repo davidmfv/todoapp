@@ -4,7 +4,9 @@ import dev.hungndl.todo.application.port.TaskTypeRepository
 import dev.hungndl.todo.domain.TaskType
 import dev.hungndl.todo.infrastructure.persistence.entity.toDomain
 import dev.hungndl.todo.infrastructure.persistence.entity.toEntity
+import org.springframework.stereotype.Repository
 
+@Repository
 class TaskTypeRepositoryImpl(private val jpaRepository: TaskTypeJpaRepository) : TaskTypeRepository {
     override fun save(taskType: TaskType): TaskType = jpaRepository.save(taskType.toEntity()).toDomain()
     override fun findById(id: Long): TaskType? = jpaRepository.findById(id).map { it.toDomain() }.orElse(null)
