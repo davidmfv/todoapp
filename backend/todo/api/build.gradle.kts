@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":infrastructure"))
     testImplementation(kotlin("test"))
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.h2database:h2:1.4.200")  // Add this line
 }
 
 tasks.test {

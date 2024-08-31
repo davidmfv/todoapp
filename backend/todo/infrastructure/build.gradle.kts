@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":application"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.h2database:h2:1.4.200")  // Add this line
 }
 
 tasks.test {
