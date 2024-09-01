@@ -10,7 +10,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Entity
 @Table(name = "tasks")
@@ -18,7 +18,7 @@ class TaskEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     val content: String,
-    val deadline: LocalDateTime,
+    val deadline: LocalDate,
     @Enumerated(EnumType.STRING)
     val priority: Priority,
     @Enumerated(EnumType.STRING)
