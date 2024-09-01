@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class TodoApiApplication
+class TodoGraphQLApplication
 
 fun main(args: Array<String>) {
-    runApplication<TodoApiApplication>(*args)
+    runApplication<TodoGraphQLApplication>(*args)
 }
