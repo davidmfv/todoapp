@@ -1,0 +1,45 @@
+scalar Date
+
+type Task {
+    id: ID!
+    content: String!
+    priority: Priority!
+    status: Status!
+    deadline: Date
+    description: String
+    type: String
+}
+
+enum Priority {
+    HIGHEST
+    HIGH
+    NORMAL
+    LOW
+    LOWER
+}
+
+enum Status {
+    TODO
+    IN_PROGRESS
+    DONE
+}
+
+input TaskInput {
+    content: String!
+    priority: Priority!
+    status: Status!
+    deadline: Date
+    description: String
+    type: String
+}
+
+type Query {
+    tasks: [Task!]!
+    task(id: ID!): Task
+}
+
+type Mutation {
+    createTask(input: TaskInput!): Task!
+    updateTask(id: ID!, input: TaskInput!): Task!
+    deleteTask(id: ID!): Boolean!
+}
