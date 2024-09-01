@@ -17,7 +17,8 @@ dependencies {
     implementation(project(":infrastructure"))
     testImplementation(kotlin("test"))
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.h2database:h2:1.4.200")  // Add this line
+    implementation("com.mysql:mysql-connector-j:8.0.33")
+    runtimeOnly("com.mysql:mysql-connector-j")
 }
 
 tasks.test {

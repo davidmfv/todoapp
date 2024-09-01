@@ -18,7 +18,8 @@ dependencies {
     implementation(project(":application"))
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("com.h2database:h2:1.4.200")  // Add this line
+    runtimeOnly("com.mysql:mysql-connector-j")
+    implementation("com.mysql:mysql-connector-j:8.0.33")
 }
 
 tasks.test {
