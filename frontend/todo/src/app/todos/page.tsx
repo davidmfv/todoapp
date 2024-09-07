@@ -1,7 +1,40 @@
 'use client';
 
 import { useEffect, useState, FormEvent } from 'react';
-import axios from 'axios';
+import { ApolloClient, InMemoryCache, ApolloProvider, gql, useMutation, useQuery } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:8080/graphql',
+  cache: new InMemoryCache(),
+});
+
+const GET_TASKS = gql`
+  query GetTasks {
+    tasks {
+      id
+      content
+      priority
+      status
+      deadline
+      description
+      type
+    }
+  }
+`;
+
+const CREATE_TASK = gql`
+  mutation CreateTask($input: TaskInput!) {
+    createTask(input: $input) {
+      id
+      content
+      priority
+      status
+      deadline
+      description
+      type
+    }
+  }
+`;
 
 interface Todo {
   id: number;
@@ -22,10 +55,7 @@ interface NewTodo {
   type: string;
 }
 
-export default function Todos() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+function TodoList() {
   const [newTodo, setNewTodo] = useState<NewTodo>({
     content: '',
     priority: 'NORMAL',
@@ -35,20 +65,8 @@ export default function Todos() {
     type: '',
   });
 
-  useEffect(() => {
-    fetchTodos();
-  }, []);
-
-  const fetchTodos = async () => {
-    try {
-      const response = await axios.get<Todo[]>('http://localhost:8080/api/tasks');
-      setTodos(response.data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { loading, error, data, refetch } = useQuery(GET_TASKS);
+  const [createTask] = useMutation(CREATE_TASK);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -58,7 +76,7 @@ export default function Todos() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/api/tasks', newTodo);
+      await createTask({ variables: { input: newTodo } });
       setNewTodo({
         content: '',
         priority: 'NORMAL',
@@ -67,14 +85,14 @@ export default function Todos() {
         description: '',
         type: '',
       });
-      fetchTodos();
+      refetch();
     } catch (err) {
-      setError('Failed to create new task');
+      console.error('Failed to create new task', err);
     }
   };
 
   if (loading) return <p className="text-center text-2xl mt-10">Loading...</p>;
-  if (error) return <p className="text-center text-2xl mt-10 text-red-500">Error: {error}</p>;
+  if (error) return <p className="text-center text-2xl mt-10 text-red-500">Error: {error.message}</p>;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -166,7 +184,7 @@ export default function Todos() {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {todos.map((todo) => (
+            {data.tasks.map((todo: Todo) => (
               <tr key={todo.id}>
                 <td className="w-1/3 text-left py-3 px-4">{todo.content}</td>
                 <td className="w-1/6 text-left py-3 px-4">{todo.priority}</td>
@@ -179,5 +197,13 @@ export default function Todos() {
         </table>
       </div>
     </div>
+  );
+}
+
+export default function Todos() {
+  return (
+    <ApolloProvider client={client}>
+      <TodoList />
+    </ApolloProvider>
   );
 }
