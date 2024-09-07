@@ -26,3 +26,5 @@ spring:
       printer:
         enabled: true
     path: /graphql
+    cors:
+      allowed-origins: http://localhost:3000

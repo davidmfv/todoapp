@@ -18,9 +18,10 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("org.springframework.boot:spring-boot-starter-graphql")
     implementation("com.graphql-java:graphql-java-extended-scalars:20.0")
-//    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-web")  // Add this line
     implementation("com.mysql:mysql-connector-j:8.0.33")
     runtimeOnly("com.mysql:mysql-connector-j")
+    implementation("org.springframework.boot:spring-boot-starter-security")
 }
 
 tasks.test {
