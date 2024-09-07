@@ -9,5 +9,5 @@ data class Task(
     val priority: Priority = Priority.NORMAL,
     val status: Status = Status.TODO,
     val description: String = "",
-    val type: String = "MFV"
+    val type: TaskType
 )

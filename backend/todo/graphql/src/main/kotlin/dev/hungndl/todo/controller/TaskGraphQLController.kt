@@ -1,6 +1,7 @@
 package dev.hungndl.todo.controller
 
 import dev.hungndl.todo.application.usecase.task.*
+import dev.hungndl.todo.application.usecase.TaskTypeService
 import dev.hungndl.todo.domain.Task
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
@@ -15,7 +16,8 @@ class TaskGraphQLController(
     private val getTaskUseCase: GetTaskUseCase,
     private val createTaskUseCase: CreateTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
-    private val deleteTaskUseCase: DeleteTaskUseCase
+    private val deleteTaskUseCase: DeleteTaskUseCase,
+    private val taskTypeService: TaskTypeService
 ) {
 
     @QueryMapping
@@ -25,11 +27,14 @@ class TaskGraphQLController(
     fun task(@Argument id: Long): Mono<Task> = getTaskUseCase.execute(id)
 
     @MutationMapping
-    fun createTask(@Argument input: TaskInput): Mono<Task> = createTaskUseCase.execute(input.toTask())
+    fun createTask(@Argument input: TaskInput): Mono<Task> = 
+        taskTypeService.getTaskType(input.typeId)
+            .flatMap { taskType -> createTaskUseCase.execute(input.toTask(taskType)) }
 
     @MutationMapping
     fun updateTask(@Argument id: Long, @Argument input: TaskInput): Mono<Task> =
-        updateTaskUseCase.execute(input.toTask().copy(id = id))
+        taskTypeService.getTaskType(input.typeId)
+            .flatMap { taskType -> updateTaskUseCase.execute(input.toTask(taskType).copy(id = id)) }
 
     @MutationMapping
     fun deleteTask(@Argument id: Long): Mono<Boolean> = deleteTaskUseCase.execute(id).thenReturn(true)

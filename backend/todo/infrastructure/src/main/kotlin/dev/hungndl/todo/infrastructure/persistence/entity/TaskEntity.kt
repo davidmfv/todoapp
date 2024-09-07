@@ -3,6 +3,7 @@ package dev.hungndl.todo.infrastructure.persistence.entity
 import dev.hungndl.todo.domain.Priority
 import dev.hungndl.todo.domain.Status
 import dev.hungndl.todo.domain.Task
+import dev.hungndl.todo.domain.TaskType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
@@ -16,7 +17,7 @@ data class TaskEntity(
     val priority: Priority,
     val status: Status,
     val description: String,
-    val type: String
+    val typeId: Long // Reference to TaskType
 )
 
 fun Task.toEntity() = TaskEntity(
@@ -26,15 +27,15 @@ fun Task.toEntity() = TaskEntity(
     priority = priority,
     status = status,
     description = description,
-    type = type
+    typeId = type.id ?: throw IllegalArgumentException("TaskType must have an id")
 )
 
-fun TaskEntity.toDomain() = Task(
+fun TaskEntity.toDomain(taskType: TaskType) = Task(
     id = id,
     content = content,
     deadline = deadline,
     priority = priority,
     status = status,
     description = description,
-    type = type
+    type = taskType
 )

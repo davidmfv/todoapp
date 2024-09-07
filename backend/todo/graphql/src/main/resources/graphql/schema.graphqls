@@ -5,9 +5,14 @@ type Task {
     content: String!
     priority: Priority!
     status: Status!
-    deadline: Date
+    deadline: Date!
     description: String
-    type: String
+    type: TaskType!
+}
+
+type TaskType {
+    id: ID!
+    name: String!
 }
 
 enum Priority {
@@ -28,18 +33,23 @@ input TaskInput {
     content: String!
     priority: Priority!
     status: Status!
-    deadline: Date
+    deadline: Date!
     description: String
-    type: String
+    typeId: ID!
 }
 
 type Query {
     tasks: [Task!]!
     task(id: ID!): Task
+    taskTypes: [TaskType!]!
+    taskType(id: ID!): TaskType
 }
 
 type Mutation {
     createTask(input: TaskInput!): Task!
     updateTask(id: ID!, input: TaskInput!): Task!
     deleteTask(id: ID!): Boolean!
+    createTaskType(name: String!): TaskType!
+    updateTaskType(id: ID!, name: String!): TaskType!
+    deleteTaskType(id: ID!): Boolean!
 }

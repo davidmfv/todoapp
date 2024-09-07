@@ -9,10 +9,37 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
-class TaskRepositoryImpl(private val taskReactiveRepository: TaskReactiveRepository) : TaskRepository {
-    override fun save(task: Task): Mono<Task> = taskReactiveRepository.save(task.toEntity()).map { it.toDomain() }
-    override fun findById(id: Long): Mono<Task> = taskReactiveRepository.findById(id).map { it.toDomain() }
-    override fun findAll(): Flux<Task> = taskReactiveRepository.findAll().map { it.toDomain() }
-    override fun update(task: Task): Mono<Task> = taskReactiveRepository.save(task.toEntity()).map { it.toDomain() }
+class TaskRepositoryImpl(
+    private val taskReactiveRepository: TaskReactiveRepository,
+    private val taskTypeReactiveRepository: TaskTypeReactiveRepository
+) : TaskRepository {
+    override fun save(task: Task): Mono<Task> = 
+        taskReactiveRepository.save(task.toEntity())
+            .flatMap { taskEntity ->
+                taskTypeReactiveRepository.findById(taskEntity.typeId)
+                    .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
+            }
+
+    override fun findById(id: Long): Mono<Task> = 
+        taskReactiveRepository.findById(id)
+            .flatMap { taskEntity ->
+                taskTypeReactiveRepository.findById(taskEntity.typeId)
+                    .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
+            }
+
+    override fun findAll(): Flux<Task> = 
+        taskReactiveRepository.findAll()
+            .flatMap { taskEntity ->
+                taskTypeReactiveRepository.findById(taskEntity.typeId)
+                    .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
+            }
+
+    override fun update(task: Task): Mono<Task> = 
+        taskReactiveRepository.save(task.toEntity())
+            .flatMap { taskEntity ->
+                taskTypeReactiveRepository.findById(taskEntity.typeId)
+                    .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
+            }
+
     override fun delete(id: Long): Mono<Void> = taskReactiveRepository.deleteById(id)
 }
