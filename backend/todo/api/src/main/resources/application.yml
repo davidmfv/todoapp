@@ -16,3 +16,19 @@ spring:
     level:
       org.springframework: DEBUG
       org.hibernate: DEBUG
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/todo_db
+    username: root
+    password: root
+  graphql:
+    graphiql:
+      enabled: true
+  webflux:
+    base-path: /api
+
+logging:
+  level:
+    org.springframework: DEBUG
+    org.springframework.r2dbc: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG

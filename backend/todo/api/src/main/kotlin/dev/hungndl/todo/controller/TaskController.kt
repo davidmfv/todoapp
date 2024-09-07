@@ -1,36 +1,31 @@
-package dev.hungndl.todo.domain.api.controller
+package dev.hungndl.todo.controller
 
 import dev.hungndl.todo.application.usecase.TaskService
 import dev.hungndl.todo.domain.Task
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/api/tasks")
 class TaskController(private val taskService: TaskService) {
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    fun createTask(@RequestBody task: Task): Task = taskService.createTask(task)
-
-    @GetMapping("/{id}")
-    fun getTask(@PathVariable id: Long): Task? = taskService.getTask(id)
 
     @GetMapping
-    fun getAllTasks(): List<Task> = taskService.getAllTasks()
+    fun getAllTasks(): Flux<Task> = taskService.getAllTasks()
+
+    @GetMapping("/{id}")
+    fun getTask(@PathVariable id: Long): Mono<Task> = taskService.getTask(id)
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createTask(@RequestBody task: Task): Mono<Task> = taskService.createTask(task)
 
     @PutMapping("/{id}")
-    fun updateTask(@PathVariable id: Long, @RequestBody task: Task): Task =
+    fun updateTask(@PathVariable id: Long, @RequestBody task: Task): Mono<Task> =
         taskService.updateTask(task.copy(id = id))
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteTask(@PathVariable id: Long) = taskService.deleteTask(id)
+    fun deleteTask(@PathVariable id: Long): Mono<Void> = taskService.deleteTask(id)
 }
