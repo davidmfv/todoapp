@@ -16,6 +16,9 @@ spring:
     level:
       org.springframework: DEBUG
       org.hibernate: DEBUG
+      org.springframework.graphql: DEBUG
+      org.springframework.web: DEBUG
+      org.springframework.boot.autoconfigure: DEBUG
   graphql:
     graphiql:
       enabled: true
