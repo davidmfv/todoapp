@@ -1,11 +1,12 @@
 package dev.hungndl.todo.application.usecase.task.impl
 
-import dev.hungndl.todo.application.port.TaskRepository
+import dev.hungndl.todo.application.usecase.TaskService
 import dev.hungndl.todo.application.usecase.task.UpdateTaskUseCase
 import dev.hungndl.todo.domain.Task
 import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
 
 @Component
-class UpdateTaskUseCaseImpl(private val taskRepository: TaskRepository) : UpdateTaskUseCase {
-    override fun execute(task: Task): Task = taskRepository.update(task)
+class UpdateTaskUseCaseImpl(private val taskService: TaskService) : UpdateTaskUseCase {
+    override fun execute(task: Task): Mono<Task> = taskService.updateTask(task)
 }

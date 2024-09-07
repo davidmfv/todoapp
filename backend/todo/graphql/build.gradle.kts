@@ -16,17 +16,21 @@ dependencies {
     implementation(project(":application"))
     implementation(project(":infrastructure"))
     testImplementation(kotlin("test"))
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-graphql")
     implementation("com.graphql-java:graphql-java-extended-scalars:20.0")
-    implementation("org.springframework.boot:spring-boot-starter-web")  // Add this line
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("dev.miku:r2dbc-mysql:0.8.2.RELEASE")
     implementation("com.mysql:mysql-connector-j:8.0.33")
-    runtimeOnly("com.mysql:mysql-connector-j")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.projectreactor:reactor-core") // Add this line
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions") // Add this line
 }
 
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
 }

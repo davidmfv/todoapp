@@ -1,19 +1,13 @@
 package dev.hungndl.todo.infrastructure.persistence.entity
 
 import dev.hungndl.todo.domain.TaskType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
 
-@Entity
-@Table(name = "task_types")
-class TaskTypeEntity(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Table("task_types")
+data class TaskTypeEntity(
+    @Id
     val id: Long? = null,
-    @Column(unique = true)
     val name: String
 )
 

@@ -3,25 +3,17 @@ package dev.hungndl.todo.infrastructure.persistence.entity
 import dev.hungndl.todo.domain.Priority
 import dev.hungndl.todo.domain.Status
 import dev.hungndl.todo.domain.Task
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
 
-@Entity
-@Table(name = "tasks")
-class TaskEntity(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Table("tasks")
+data class TaskEntity(
+    @Id
     val id: Long? = null,
     val content: String,
     val deadline: LocalDate,
-    @Enumerated(EnumType.STRING)
     val priority: Priority,
-    @Enumerated(EnumType.STRING)
     val status: Status,
     val description: String,
     val type: String

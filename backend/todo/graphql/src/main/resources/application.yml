@@ -15,7 +15,7 @@ spring:
   logging:
     level:
       org.springframework: DEBUG
-      org.hibernate: DEBUG
+      org.springframework.r2dbc: DEBUG
       org.springframework.graphql: DEBUG
       org.springframework.web: DEBUG
       org.springframework.boot.autoconfigure: DEBUG
@@ -28,3 +28,7 @@ spring:
     path: /graphql
     cors:
       allowed-origins: http://localhost:3000
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/todo_db
+    username: root
+    password: root
