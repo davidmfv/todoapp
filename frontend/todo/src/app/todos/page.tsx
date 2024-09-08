@@ -17,7 +17,10 @@ const GET_TASKS = gql`
       status
       deadline
       description
-      type
+      type {
+        id
+        name
+      }
     }
   }
 `;
@@ -31,10 +34,18 @@ const CREATE_TASK = gql`
       status
       deadline
       description
-      type
+      type {
+        id
+        name
+      }
     }
   }
 `;
+
+interface TaskType {
+  id: number;
+  name: string;
+}
 
 interface Todo {
   id: number;
@@ -43,7 +54,7 @@ interface Todo {
   status: string;
   deadline: string;
   description: string;
-  type: string;
+  type: TaskType;
 }
 
 interface NewTodo {
@@ -52,7 +63,7 @@ interface NewTodo {
   status: string;
   deadline: string;
   description: string;
-  type: string;
+  typeId: number;  // Changed from 'type' to 'typeId'
 }
 
 function TodoList() {
@@ -62,7 +73,7 @@ function TodoList() {
     status: 'TODO',
     deadline: '',
     description: '',
-    type: '',
+    typeId: 0,  // Set an appropriate default value
   });
 
   const { loading, error, data, refetch } = useQuery(GET_TASKS);
@@ -76,14 +87,21 @@ function TodoList() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await createTask({ variables: { input: newTodo } });
+      await createTask({ 
+        variables: { 
+          input: {
+            ...newTodo,
+            typeId: parseInt(newTodo.typeId.toString(), 10)  // Ensure typeId is a number
+          } 
+        } 
+      });
       setNewTodo({
         content: '',
         priority: 'NORMAL',
         status: 'TODO',
         deadline: '',
         description: '',
-        type: '',
+        typeId: 0,  // Set an appropriate default value
       });
       refetch();
     } catch (err) {
@@ -155,11 +173,11 @@ function TodoList() {
         <div className="mb-4">
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            type="text"
-            name="type"
-            value={newTodo.type}
+            type="number"
+            name="typeId"
+            value={newTodo.typeId}
             onChange={handleInputChange}
-            placeholder="Task type"
+            placeholder="Task type ID"
           />
         </div>
         <div className="flex items-center justify-between">
@@ -190,7 +208,7 @@ function TodoList() {
                 <td className="w-1/6 text-left py-3 px-4">{todo.priority}</td>
                 <td className="w-1/6 text-left py-3 px-4">{todo.status}</td>
                 <td className="w-1/6 text-left py-3 px-4">{todo.deadline}</td>
-                <td className="w-1/6 text-left py-3 px-4">{todo.type}</td>
+                <td className="w-1/6 text-left py-3 px-4">{todo.type.name}</td>
               </tr>
             ))}
           </tbody>
