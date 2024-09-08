@@ -25,6 +25,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.projectreactor:reactor-core") // Add this line
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions") // Add this line
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-mysql")
 }
 
 tasks.test {

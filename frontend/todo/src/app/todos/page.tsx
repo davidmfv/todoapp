@@ -42,6 +42,15 @@ const CREATE_TASK = gql`
   }
 `;
 
+const GET_TASK_TYPES = gql`
+  query GetTaskTypes {
+    taskTypes {
+      id
+      name
+    }
+  }
+`;
+
 interface TaskType {
   id: number;
   name: string;
@@ -78,6 +87,7 @@ function TodoList() {
 
   const { loading, error, data, refetch } = useQuery(GET_TASKS);
   const [createTask] = useMutation(CREATE_TASK);
+  const { data: taskTypesData } = useQuery(GET_TASK_TYPES);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -171,14 +181,20 @@ function TodoList() {
           />
         </div>
         <div className="mb-4">
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            type="number"
+          <select
+            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
             name="typeId"
             value={newTodo.typeId}
             onChange={handleInputChange}
-            placeholder="Task type ID"
-          />
+            required
+          >
+            <option value="">Select a task type</option>
+            {taskTypesData?.taskTypes.map((type: TaskType) => (
+              <option key={type.id} value={type.id}>
+                {type.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex items-center justify-between">
           <button 

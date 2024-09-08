@@ -5,6 +5,7 @@ import dev.hungndl.todo.domain.Status
 import dev.hungndl.todo.domain.Task
 import dev.hungndl.todo.domain.TaskType
 import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
 
@@ -17,7 +18,8 @@ data class TaskEntity(
     val priority: Priority,
     val status: Status,
     val description: String,
-    val typeId: Long // Reference to TaskType
+    @Column("task_type_id")
+    val taskTypeId: Long
 )
 
 fun Task.toEntity() = TaskEntity(
@@ -27,7 +29,7 @@ fun Task.toEntity() = TaskEntity(
     priority = priority,
     status = status,
     description = description,
-    typeId = type.id ?: throw IllegalArgumentException("TaskType must have an id")
+    taskTypeId = type.id ?: throw IllegalArgumentException("TaskType must have an id")
 )
 
 fun TaskEntity.toDomain(taskType: TaskType) = Task(

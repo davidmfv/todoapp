@@ -32,3 +32,10 @@ spring:
     url: r2dbc:mysql://localhost:3306/todo_db
     username: root
     password: root
+  flyway:
+    url: jdbc:mysql://localhost:3306/todo_db
+    user: root
+    password: root
+    locations: classpath:db/migration
+    baselineOnMigrate: true  # Add this line
+    baselineVersion: 0  # Add this line

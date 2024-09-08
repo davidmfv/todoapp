@@ -16,28 +16,28 @@ class TaskRepositoryImpl(
     override fun save(task: Task): Mono<Task> = 
         taskReactiveRepository.save(task.toEntity())
             .flatMap { taskEntity ->
-                taskTypeReactiveRepository.findById(taskEntity.typeId)
+                taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
             }
 
     override fun findById(id: Long): Mono<Task> = 
         taskReactiveRepository.findById(id)
             .flatMap { taskEntity ->
-                taskTypeReactiveRepository.findById(taskEntity.typeId)
+                taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
             }
 
     override fun findAll(): Flux<Task> = 
         taskReactiveRepository.findAll()
             .flatMap { taskEntity ->
-                taskTypeReactiveRepository.findById(taskEntity.typeId)
+                taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
             }
 
     override fun update(task: Task): Mono<Task> = 
         taskReactiveRepository.save(task.toEntity())
             .flatMap { taskEntity ->
-                taskTypeReactiveRepository.findById(taskEntity.typeId)
+                taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
             }
 
