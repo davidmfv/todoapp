@@ -29,4 +29,7 @@ class TaskTypeRepositoryImpl(private val taskTypeReactiveRepository: TaskTypeRea
     override suspend fun delete(id: Long) {
         taskTypeReactiveRepository.deleteById(id).awaitFirstOrNull()
     }
+
+    override fun findAllById(ids: List<Long>): Flow<TaskType> =
+        taskTypeReactiveRepository.findAllById(ids).asFlow().map { it.toDomain() }
 }
