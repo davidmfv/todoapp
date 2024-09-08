@@ -19,6 +19,8 @@ spring:
       org.springframework.graphql: DEBUG
       org.springframework.web: DEBUG
       org.springframework.boot.autoconfigure: DEBUG
+      io.r2dbc.mysql: DEBUG  # Add this line for R2DBC MySQL logging
+      org.springframework.data.r2dbc: DEBUG  # Add this line for Spring Data R2DBC logging
   graphql:
     graphiql:
       enabled: true
@@ -39,3 +41,15 @@ spring:
     locations: classpath:db/migration
     baselineOnMigrate: true  # Add this line
     baselineVersion: 0  # Add this line
+
+logging:
+  level:
+    org.springframework: DEBUG
+    org.springframework.r2dbc: DEBUG
+    org.springframework.graphql: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
+    io.r2dbc.mysql: DEBUG  # Add this line for R2DBC MySQL logging
+    org.springframework.data.r2dbc: DEBUG  # Add this line for Spring Data R2DBC logging
+    io.r2dbc.mysql.QUERY: DEBUG  # Add this line to log SQL queries
+    io.r2dbc.mysql.PARAM: DEBUG  # Add this line to log SQL parameters
