@@ -27,6 +27,8 @@ dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions") // Add this line
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 }
 
 tasks.test {

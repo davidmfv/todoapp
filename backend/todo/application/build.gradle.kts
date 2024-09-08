@@ -16,9 +16,8 @@ dependencies {
     implementation(project(":domain"))
     testImplementation(kotlin("test"))
     
-    // Add these lines
-    implementation("io.projectreactor:reactor-core")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 }
 
 tasks.test {

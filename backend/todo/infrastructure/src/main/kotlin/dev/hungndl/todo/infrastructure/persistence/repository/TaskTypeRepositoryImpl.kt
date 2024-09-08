@@ -2,17 +2,31 @@ package dev.hungndl.todo.infrastructure.persistence.repository
 
 import dev.hungndl.todo.application.port.TaskTypeRepository
 import dev.hungndl.todo.domain.TaskType
+import dev.hungndl.todo.infrastructure.persistence.entity.TaskTypeEntity
 import dev.hungndl.todo.infrastructure.persistence.entity.toDomain
 import dev.hungndl.todo.infrastructure.persistence.entity.toEntity
 import org.springframework.stereotype.Repository
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.awaitSingle
 
 @Repository
 class TaskTypeRepositoryImpl(private val taskTypeReactiveRepository: TaskTypeReactiveRepository) : TaskTypeRepository {
-    override fun save(taskType: TaskType): Mono<TaskType> = taskTypeReactiveRepository.save(taskType.toEntity()).map { it.toDomain() }
-    override fun findById(id: Long): Mono<TaskType> = taskTypeReactiveRepository.findById(id).map { it.toDomain() }
-    override fun findAll(): Flux<TaskType> = taskTypeReactiveRepository.findAll().map { it.toDomain() }
-    override fun update(taskType: TaskType): Mono<TaskType> = taskTypeReactiveRepository.save(taskType.toEntity()).map { it.toDomain() }
-    override fun delete(id: Long): Mono<Void> = taskTypeReactiveRepository.deleteById(id)
+    override suspend fun save(taskType: TaskType): TaskType =
+        taskTypeReactiveRepository.save(taskType.toEntity()).awaitSingle().toDomain()
+
+    override suspend fun findById(id: Long): TaskType? =
+        taskTypeReactiveRepository.findById(id).awaitFirstOrNull()?.toDomain()
+
+    override fun findAll(): Flow<TaskType> =
+        taskTypeReactiveRepository.findAll().asFlow().map { it.toDomain() }
+
+    override suspend fun update(taskType: TaskType): TaskType =
+        taskTypeReactiveRepository.save(taskType.toEntity()).awaitSingle().toDomain()
+
+    override suspend fun delete(id: Long) {
+        taskTypeReactiveRepository.deleteById(id).awaitFirstOrNull()
+    }
 }

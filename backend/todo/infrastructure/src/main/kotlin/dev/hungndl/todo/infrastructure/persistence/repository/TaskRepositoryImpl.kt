@@ -5,41 +5,46 @@ import dev.hungndl.todo.domain.Task
 import dev.hungndl.todo.infrastructure.persistence.entity.toDomain
 import dev.hungndl.todo.infrastructure.persistence.entity.toEntity
 import org.springframework.stereotype.Repository
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.awaitSingle
 
 @Repository
 class TaskRepositoryImpl(
     private val taskReactiveRepository: TaskReactiveRepository,
     private val taskTypeReactiveRepository: TaskTypeReactiveRepository
 ) : TaskRepository {
-    override fun save(task: Task): Mono<Task> = 
+    override suspend fun save(task: Task): Task = 
         taskReactiveRepository.save(task.toEntity())
             .flatMap { taskEntity ->
                 taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
-            }
+            }.awaitSingle()
 
-    override fun findById(id: Long): Mono<Task> = 
+    override suspend fun findById(id: Long): Task? = 
         taskReactiveRepository.findById(id)
             .flatMap { taskEntity ->
                 taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
-            }
+            }.awaitFirstOrNull()
 
-    override fun findAll(): Flux<Task> = 
+    override fun findAll(): Flow<Task> = 
         taskReactiveRepository.findAll()
             .flatMap { taskEntity ->
                 taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
-            }
+            }.asFlow()
 
-    override fun update(task: Task): Mono<Task> = 
+    override suspend fun update(task: Task): Task = 
         taskReactiveRepository.save(task.toEntity())
             .flatMap { taskEntity ->
                 taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
-            }
+            }.awaitSingle()
 
-    override fun delete(id: Long): Mono<Void> = taskReactiveRepository.deleteById(id)
+    override suspend fun delete(id: Long) {
+        taskReactiveRepository.deleteById(id).awaitFirstOrNull()
+    }
 }

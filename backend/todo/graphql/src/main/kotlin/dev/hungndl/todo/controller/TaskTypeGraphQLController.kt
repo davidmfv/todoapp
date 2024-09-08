@@ -6,31 +6,28 @@ import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.flow.Flow
 
 @Controller
 class TaskTypeGraphQLController(private val taskTypeService: TaskTypeService) {
 
     @QueryMapping
-    fun taskTypes(): Flux<TaskType> = taskTypeService.getAllTaskTypes()
+    fun taskTypes(): Flow<TaskType> = taskTypeService.getAllTaskTypes()
 
     @QueryMapping
-    fun taskType(@Argument id: Long): Mono<TaskType> = taskTypeService.getTaskType(id)
+    suspend fun taskType(@Argument id: Long): TaskType? = taskTypeService.getTaskType(id)
 
     @MutationMapping
-    fun createTaskType(@Argument input: TaskTypeInput): Mono<TaskType> = 
-        taskTypeService.createTaskType(input.toTaskType())
+    suspend fun createTaskType(@Argument name: String): TaskType = 
+        taskTypeService.createTaskType(TaskType(name = name))
 
     @MutationMapping
-    fun updateTaskType(@Argument id: Long, @Argument input: TaskTypeInput): Mono<TaskType> =
-        taskTypeService.updateTaskType(input.toTaskType().copy(id = id))
+    suspend fun updateTaskType(@Argument id: Long, @Argument name: String): TaskType =
+        taskTypeService.updateTaskType(TaskType(id = id, name = name))
 
     @MutationMapping
-    fun deleteTaskType(@Argument id: Long): Mono<Boolean> = 
-        taskTypeService.deleteTaskType(id).thenReturn(true)
-}
-
-data class TaskTypeInput(val name: String) {
-    fun toTaskType() = TaskType(name = name)
+    suspend fun deleteTaskType(@Argument id: Long): Boolean {
+        taskTypeService.deleteTaskType(id)
+        return true
+    }
 }

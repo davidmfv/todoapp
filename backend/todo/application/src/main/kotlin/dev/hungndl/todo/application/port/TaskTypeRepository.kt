@@ -1,13 +1,12 @@
 package dev.hungndl.todo.application.port
 
 import dev.hungndl.todo.domain.TaskType
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.flow.Flow
 
 interface TaskTypeRepository {
-    fun save(taskType: TaskType): Mono<TaskType>
-    fun findById(id: Long): Mono<TaskType>
-    fun findAll(): Flux<TaskType>
-    fun update(taskType: TaskType): Mono<TaskType>
-    fun delete(id: Long): Mono<Void>
+    suspend fun save(taskType: TaskType): TaskType
+    suspend fun findById(id: Long): TaskType?
+    fun findAll(): Flow<TaskType>
+    suspend fun update(taskType: TaskType): TaskType
+    suspend fun delete(id: Long)
 }

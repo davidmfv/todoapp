@@ -7,8 +7,7 @@ import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.flow.Flow
 
 @Controller
 class TaskGraphQLController(
@@ -21,22 +20,27 @@ class TaskGraphQLController(
 ) {
 
     @QueryMapping
-    fun tasks(): Flux<Task> = getAllTasksUseCase.execute()
+    suspend fun tasks(): Flow<Task> = getAllTasksUseCase.execute()
 
     @QueryMapping
-    fun task(@Argument id: Long): Mono<Task> = getTaskUseCase.execute(id)
+    suspend fun task(@Argument id: Long): Task? = getTaskUseCase.execute(id)
 
     @MutationMapping
-    fun createTask(@Argument input: TaskInput): Mono<Task> = 
-        taskTypeService.getTaskType(input.typeId)
-            .flatMap { taskType -> createTaskUseCase.execute(input.toTask(taskType)) }
+    suspend fun createTask(@Argument input: TaskInput): Task = 
+        taskTypeService.getTaskType(input.typeId)?.let { taskType ->
+            createTaskUseCase.execute(input.toTask(taskType))
+        } ?: throw IllegalArgumentException("Invalid task type")
 
     @MutationMapping
-    fun updateTask(@Argument id: Long, @Argument input: TaskInput): Mono<Task> =
-        taskTypeService.getTaskType(input.typeId)
-            .flatMap { taskType -> updateTaskUseCase.execute(input.toTask(taskType).copy(id = id)) }
+    suspend fun updateTask(@Argument id: Long, @Argument input: TaskInput): Task =
+        taskTypeService.getTaskType(input.typeId)?.let { taskType ->
+            updateTaskUseCase.execute(input.toTask(taskType).copy(id = id))
+        } ?: throw IllegalArgumentException("Invalid task type")
 
     @MutationMapping
-    fun deleteTask(@Argument id: Long): Mono<Boolean> = deleteTaskUseCase.execute(id).thenReturn(true)
+    suspend fun deleteTask(@Argument id: Long): Boolean {
+        deleteTaskUseCase.execute(id)
+        return true
+    }
 }
 
