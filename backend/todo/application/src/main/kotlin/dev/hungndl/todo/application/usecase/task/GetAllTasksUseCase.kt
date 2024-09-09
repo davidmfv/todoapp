@@ -4,5 +4,5 @@ import dev.hungndl.todo.domain.Task
 import kotlinx.coroutines.flow.Flow
 
 interface GetAllTasksUseCase {
-    suspend fun execute(): List<Task>
+    fun execute(): Flow<Task>
 }

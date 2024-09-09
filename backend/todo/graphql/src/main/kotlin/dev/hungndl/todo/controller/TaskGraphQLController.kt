@@ -7,6 +7,7 @@ import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
+import kotlinx.coroutines.flow.Flow
 
 @Controller
 class TaskGraphQLController(
@@ -18,7 +19,7 @@ class TaskGraphQLController(
     private val taskTypeService: TaskTypeService
 ) {
     @QueryMapping
-    suspend fun tasks(): List<Task> = getAllTasksUseCase.execute()
+    fun tasks(): Flow<Task> = getAllTasksUseCase.execute()
 
     @QueryMapping
     suspend fun task(@Argument id: Long): Task? = getTaskUseCase.execute(id)
