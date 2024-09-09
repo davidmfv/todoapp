@@ -22,9 +22,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("dev.miku:r2dbc-mysql:0.8.2.RELEASE")
     implementation("com.mysql:mysql-connector-j:8.0.33")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("io.projectreactor:reactor-core") // Add this line
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions") // Add this line
+    // Remove the following line:
+    // implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.projectreactor:reactor-core")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
