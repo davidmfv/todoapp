@@ -1,6 +1,5 @@
 package dev.hungndl.todo.controller
 
-import dev.hungndl.todo.application.usecase.TaskService
 import dev.hungndl.todo.domain.Task
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
