@@ -2,18 +2,11 @@ package dev.hungndl.todo.controller
 
 import dev.hungndl.todo.application.usecase.task.*
 import dev.hungndl.todo.application.usecase.TaskTypeService
-import dev.hungndl.todo.dataloader.TaskTypeDataLoader
 import dev.hungndl.todo.domain.Task
-import dev.hungndl.todo.domain.TaskType
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
-import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
-import kotlinx.coroutines.flow.Flow
-import org.dataloader.DataLoader
-import java.util.concurrent.CompletableFuture
-import graphql.schema.DataFetchingEnvironment
 
 @Controller
 class TaskGraphQLController(
@@ -22,12 +15,10 @@ class TaskGraphQLController(
     private val createTaskUseCase: CreateTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
-    private val taskTypeService: TaskTypeService,
-    private val taskTypeDataLoader: TaskTypeDataLoader
+    private val taskTypeService: TaskTypeService
 ) {
-
     @QueryMapping
-    suspend fun tasks(): Flow<Task> = getAllTasksUseCase.execute()
+    suspend fun tasks(): List<Task> = getAllTasksUseCase.execute()
 
     @QueryMapping
     suspend fun task(@Argument id: Long): Task? = getTaskUseCase.execute(id)
@@ -48,12 +39,6 @@ class TaskGraphQLController(
     suspend fun deleteTask(@Argument id: Long): Boolean {
         deleteTaskUseCase.execute(id)
         return true
-    }
-
-    @SchemaMapping(typeName = "Task", field = "type")
-    fun taskType(task: Task, env: DataFetchingEnvironment): CompletableFuture<TaskType?> {
-        val dataLoader = env.getDataLoader<Long, TaskType?>("taskTypeDataLoader")
-        return dataLoader?.load(task.type.id!!) ?: CompletableFuture.completedFuture(null)
     }
 }
 

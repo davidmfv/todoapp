@@ -2,11 +2,13 @@ package dev.hungndl.todo.infrastructure.persistence.repository
 
 import dev.hungndl.todo.application.port.TaskRepository
 import dev.hungndl.todo.domain.Task
+import dev.hungndl.todo.domain.TaskType
+import dev.hungndl.todo.infrastructure.persistence.entity.TaskEntity
+import dev.hungndl.todo.infrastructure.persistence.entity.TaskTypeEntity
 import dev.hungndl.todo.infrastructure.persistence.entity.toDomain
 import dev.hungndl.todo.infrastructure.persistence.entity.toEntity
 import org.springframework.stereotype.Repository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
@@ -30,12 +32,18 @@ class TaskRepositoryImpl(
                     .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
             }.awaitFirstOrNull()
 
-    override fun findAll(): Flow<Task> = 
-        taskReactiveRepository.findAll()
-            .flatMap { taskEntity ->
-                taskTypeReactiveRepository.findById(taskEntity.taskTypeId)
-                    .map { taskTypeEntity -> taskEntity.toDomain(taskTypeEntity.toDomain()) }
-            }.asFlow()
+    override fun findAll(): Flow<Task> = flow {
+        val tasks = taskReactiveRepository.findAll().asFlow().toList()
+        val taskTypeIds = tasks.map { it.taskTypeId }.distinct()
+        val taskTypes = taskTypeReactiveRepository.findAllById(taskTypeIds).asFlow().toList()
+            .associateBy { it.id!! }
+
+        tasks.forEach { taskEntity ->
+            val taskType = taskTypes[taskEntity.taskTypeId]?.toDomain() 
+                ?: TaskType(id = taskEntity.taskTypeId, name = "Unknown")
+            emit(taskEntity.toDomain(taskType))
+        }
+    }
 
     override suspend fun update(task: Task): Task = 
         taskReactiveRepository.save(task.toEntity())
