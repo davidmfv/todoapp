@@ -15,26 +15,27 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":application"))
     implementation(project(":infrastructure"))
-    testImplementation(kotlin("test"))
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-graphql")
-    implementation("com.graphql-java:graphql-java-extended-scalars:20.0")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    implementation("dev.miku:r2dbc-mysql:0.8.2.RELEASE")
-    implementation("com.mysql:mysql-connector-j:8.0.33")
-    // Remove the following line:
-    // implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("io.projectreactor:reactor-core")
+    implementation("org.springframework.boot:spring-boot-starter-graphql")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    implementation("org.flywaydb:flyway-core")
-    implementation("org.flywaydb:flyway-mysql")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("org.springframework:spring-webflux")
+    runtimeOnly("com.mysql:mysql-connector-j")
+    runtimeOnly("dev.miku:r2dbc-mysql:0.8.2.RELEASE") // Add this line
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.springframework.graphql:spring-graphql-test")
+    testImplementation("com.h2database:h2")
+    testImplementation("io.r2dbc:r2dbc-h2")
+    testImplementation("io.mockk:mockk:1.13.5")
+    implementation("com.graphql-java:graphql-java-extended-scalars:20.0")
 }
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+UseAppCDS")
 }
 
 kotlin {

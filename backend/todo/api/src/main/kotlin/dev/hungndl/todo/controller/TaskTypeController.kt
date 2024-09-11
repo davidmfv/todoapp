@@ -1,31 +1,36 @@
 package dev.hungndl.todo.controller
 
-import dev.hungndl.todo.application.usecase.TaskTypeService
+import dev.hungndl.todo.application.usecase.tasktype.*
 import dev.hungndl.todo.domain.TaskType
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.flow.Flow
 
 @RestController
 @RequestMapping("/api/task-types")
-class TaskTypeController(private val taskTypeService: TaskTypeService) {
+class TaskTypeController(
+    private val getAllTaskTypesUseCase: GetAllTaskTypesUseCase,
+    private val getTaskTypeUseCase: GetTaskTypeUseCase,
+    private val createTaskTypeUseCase: CreateTaskTypeUseCase,
+    private val updateTaskTypeUseCase: UpdateTaskTypeUseCase,
+    private val deleteTaskTypeUseCase: DeleteTaskTypeUseCase
+) {
 
     @GetMapping
-    fun getAllTaskTypes(): Flux<TaskType> = taskTypeService.getAllTaskTypes()
+    fun getAllTaskTypes(): Flow<TaskType> = getAllTaskTypesUseCase.execute()
 
     @GetMapping("/{id}")
-    fun getTaskType(@PathVariable id: Long): Mono<TaskType> = taskTypeService.getTaskType(id)
+    suspend fun getTaskType(@PathVariable id: Long): TaskType? = getTaskTypeUseCase.execute(id)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createTaskType(@RequestBody taskType: TaskType): Mono<TaskType> = taskTypeService.createTaskType(taskType)
+    suspend fun createTaskType(@RequestBody taskType: TaskType): TaskType = createTaskTypeUseCase.execute(taskType)
 
     @PutMapping("/{id}")
-    fun updateTaskType(@PathVariable id: Long, @RequestBody taskType: TaskType): Mono<TaskType> =
-        taskTypeService.updateTaskType(taskType.copy(id = id))
+    suspend fun updateTaskType(@PathVariable id: Long, @RequestBody taskType: TaskType): TaskType =
+        updateTaskTypeUseCase.execute(taskType.copy(id = id))
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteTaskType(@PathVariable id: Long): Mono<Void> = taskTypeService.deleteTaskType(id)
+    suspend fun deleteTaskType(@PathVariable id: Long) = deleteTaskTypeUseCase.execute(id)
 }
