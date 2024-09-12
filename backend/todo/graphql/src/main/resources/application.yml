@@ -53,3 +53,8 @@ logging:
     org.springframework.data.r2dbc: DEBUG  # Add this line for Spring Data R2DBC logging
     io.r2dbc.mysql.QUERY: DEBUG  # Add this line to log SQL queries
     io.r2dbc.mysql.PARAM: DEBUG  # Add this line to log SQL parameters
+
+notion:
+  api:
+    key: your_notion_api_key_here
+    version: 2022-06-28
