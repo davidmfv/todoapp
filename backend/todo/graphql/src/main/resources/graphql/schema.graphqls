@@ -53,3 +53,26 @@ type Mutation {
     updateTaskType(id: ID!, name: String!): TaskType!
     deleteTaskType(id: ID!): Boolean!
 }
+
+# ... existing types and queries ...
+
+type Goal {
+    id: ID
+    notionId: String!
+    name: String!
+    type: GoalType!
+    progress: Int!
+}
+
+enum GoalType {
+    PROGRAMMING
+    ENGLISH
+}
+
+extend type Query {
+    goals: [Goal!]!
+}
+
+extend type Mutation {
+    syncGoalsWithNotion: Boolean!
+}

@@ -1,0 +1,7 @@
+CREATE TABLE goals (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    notion_id VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    progress INT NOT NULL
+);

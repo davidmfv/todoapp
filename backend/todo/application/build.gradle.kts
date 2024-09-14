@@ -14,8 +14,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
     implementation(project(":domain"))
-    testImplementation(kotlin("test"))
-    
+    implementation(project(":notion-client"))  // Add this line
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     

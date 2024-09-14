@@ -1,7 +1,8 @@
 package dev.hungndl.todo.controller
 
+import dev.hungndl.todo.application.service.GoalService
 import dev.hungndl.todo.application.usecase.task.*
-import dev.hungndl.todo.application.usecase.TaskTypeService
+import dev.hungndl.todo.domain.Goal
 import dev.hungndl.todo.domain.Task
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
@@ -16,7 +17,7 @@ class TaskGraphQLController(
     private val createTaskUseCase: CreateTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
-    private val taskTypeService: TaskTypeService
+    private val goalService: GoalService
 ) {
     @QueryMapping
     fun tasks(): Flow<Task> = getAllTasksUseCase.execute()
@@ -41,5 +42,11 @@ class TaskGraphQLController(
         deleteTaskUseCase.execute(id)
         return true
     }
+
+    @QueryMapping
+    fun goals(): Flow<Goal> = goalService.getAllGoals()
+
+    @MutationMapping
+    suspend fun syncGoalsWithNotion(): Boolean = goalService.syncGoalsWithNotion()
 }
 
