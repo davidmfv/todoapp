@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package dev.hungndl
 
 import dev.hungndl.todo.notion.NotionClient
@@ -8,9 +10,9 @@ import org.slf4j.LoggerFactory
 fun main() = runBlocking {
     val logger = LoggerFactory.getLogger("NotionDemo")
 
-    val apiKey = "secret_z0xXcu1eakaIvs5qRiqsA3styHLJRm4WBASBrU8g3U4"
+    val apiKey = ""
     val apiVersion = "2022-06-28"
-    val databaseId = "101da8c9c7fb8099a9c7c90cba6c7dff"
+    val databaseId = ""
 
     val notionConfig = NotionConfig(apiKey, apiVersion)
     val notionClient: NotionClient = notionConfig.createNotionClient()
@@ -37,32 +39,73 @@ fun main() = runBlocking {
 private fun convertToMap(properties: Map<String, Map<String, Any>>): Map<String, Any> {
     return properties.mapValues { (_, value) ->
         val type = value["type"] as String
-        when (type) {
-            "rich_text" -> {
-                val text = value["rich_text"] as List<Map<String, Any>>
-                text.joinToString("") { it["plain_text"] as String }
-            }
-            "unique_id" -> {
-                val items = value["unique_id"] as Map<String, Any>
-                (items["number"] as Double).toInt()
-            }
-            "status" -> {
-                val items = value["status"] as Map<String, Any>
-                items["name"] as String
-            }
-            "date" -> {
-                val items = value["date"] as Map<String, Any>
-                items["start"] as String
-            }
-            "title" -> {
-                val text = value["title"] as List<Map<String, Any>>
-                text.joinToString("") { it["plain_text"] as String }
-            }
-            "people" -> {
-                val text = value["people"] as List<Map<String, Any>>
-                text.firstNotNullOfOrNull { it["id"] as String } ?: ""
-            }
-            else -> ""
+        PropertyConverterFactory.getConverter(type).convert(value)
+    }
+}
+
+
+fun interface PropertyConverter {
+    fun convert(value: Map<String, Any>): Any
+}
+
+object RichTextConverter : PropertyConverter {
+    override fun convert(value: Map<String, Any>): Any {
+        val text = value["rich_text"] as List<Map<String, Any>>
+        return text.joinToString("") { it["plain_text"] as String }
+    }
+}
+
+object UniqueIdConverter : PropertyConverter {
+    override fun convert(value: Map<String, Any>): Any {
+        val items = value["unique_id"] as Map<String, Any>
+        return (items["number"] as Double).toInt()
+    }
+}
+
+object StatusConverter : PropertyConverter {
+    override fun convert(value: Map<String, Any>): Any {
+        val items = value["status"] as Map<String, Any>
+        return items["name"] as String
+    }
+}
+
+object DateConverter : PropertyConverter {
+    override fun convert(value: Map<String, Any>): Any {
+        val items = value["date"] as Map<String, Any>
+        return items["start"] as String
+    }
+}
+
+object TitleConverter : PropertyConverter {
+    override fun convert(value: Map<String, Any>): Any {
+        val text = value["title"] as List<Map<String, Any>>
+        return text.joinToString("") { it["plain_text"] as String }
+    }
+}
+
+object PeopleConverter : PropertyConverter {
+    override fun convert(value: Map<String, Any>): Any {
+        val text = value["people"] as List<Map<String, Any>>
+        return text.firstNotNullOfOrNull { it["id"] as String } ?: ""
+    }
+}
+
+object DefaultConverter : PropertyConverter {
+    override fun convert(value: Map<String, Any>): Any {
+        return ""
+    }
+}
+
+object PropertyConverterFactory {
+    fun getConverter(type: String): PropertyConverter {
+        return when (type) {
+            "rich_text" -> RichTextConverter
+            "unique_id" -> UniqueIdConverter
+            "status" -> StatusConverter
+            "date" -> DateConverter
+            "title" -> TitleConverter
+            "people" -> PeopleConverter
+            else -> DefaultConverter
         }
     }
 }
